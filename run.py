@@ -33,6 +33,8 @@ if file_type == "text":
 elif file_type == "alto" or file_type == "xml":
     files = [f for f in files if f.endswith(".xml")]
 
+files = [f for f in files if not f.endswith("_noisy.xml")]
+
 if len(files) == 0:
     raise ValueError("No files found in the input folder")
 
