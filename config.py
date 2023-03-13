@@ -22,8 +22,8 @@ WORD_REPLACEMENT_OPTS = {
 }
 
 # Probability of replacing a word with a blank string or a string of Xs (or other characters if specified) 
-# Default: 0.1 (10%)
-WORD_REPLACEMENT_PROB = 0.1
+# Default: 0.005 (0.5%)
+WORD_REPLACEMENT_PROB = 0.005
 
 # +--------------------------------------------------+
 # |   TYPO CONFIGS                                   |
