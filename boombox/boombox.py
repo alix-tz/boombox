@@ -40,6 +40,8 @@ class BoomBox:
         self.file_type = file_type
         self.seed = seed
         self.stats = {}
+        self.original = None
+        self.noisy = None
 
     def _replace_word(
         self, string, word_replacement_opts, word_replacement_prob

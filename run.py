@@ -3,6 +3,8 @@
 import os
 import argparse
 
+import textdistance
+
 from boombox.boombox import BoomBox
 from config import *
 
@@ -12,6 +14,7 @@ parser = argparse.ArgumentParser(description="Boombox: a tool for generating noi
 parser.add_argument("-i", "--path", help="path to the folder containing the files to be processed", required=True)
 parser.add_argument("-t", "--type", help="type of file to be processed: text or alto", required=True)
 parser.add_argument("-o", "--path_out", help="path to the folder where the noisy files will be saved")
+parser.add_argument("--cer", help="character error rate to aim for", type=float)
 
 args = parser.parse_args()
 
@@ -45,6 +48,9 @@ try:
 except NameError:
     raise ValueError("Incorrect settings in config.py")
 
+if args.cer:
+    noise_opts["typo_prob"] = args.cer
+
 # process files
 original = []
 noisy = []
@@ -52,13 +58,26 @@ noisy = []
 for f in files:
     boom = BoomBox(os.path.join(path_in, f), file_type=file_type)
     boom.add_noise(noise_opts, save=True, path_out=path_out)
-    original.extend(boom.original)
-    noisy.extend(boom.noisy)
+    if boom.original:
+        original.extend(boom.original)
+    if boom.noisy:
+        noisy.extend(boom.noisy)
     print("File processed: {}".format(f))
     print("Resulting CER: {}".format(boom.get_cer()))
 
+
 # get overall CER
-# note for later: create a class called capharnaum that will contain all the functions for calculating CER
-# and other metrics
+# todo: make this better
+original = "\n".join(original)
+noisy = "\n".join(noisy)
+
+levenshtein = textdistance.levenshtein.distance(original, noisy)
+original_nchars = len(original.replace("\n", ""))
+cer = levenshtein / original_nchars
+
+print("+----------------------------------+")
+print(f"Overall CER: {cer*100:.2f}%")
+
+
 
 
