@@ -67,6 +67,7 @@ if args.cer:
 # process files
 original = []
 noisy = []
+cers = []
 
 # make directory if it doesn't exist
 if path_out:
@@ -87,9 +88,18 @@ for f in files:
         original.extend(boom.original)
     if boom.noisy:
         noisy.extend(boom.noisy)
+    if boom.get_cer():
+        cers.append(boom.get_cer())
     print("File processed: {}".format(f))
     print("Resulting CER: {}".format(boom.get_cer()))
 
+print("+----------------------------------+")
+print("| Overall statistics               |")
+print("+----------------------------------+")
+
+# get average CER
+avg_cer = sum(cers) / len(cers)
+print(f"Average CER: {avg_cer*100:.2f}%")
 
 # get overall CER
 # todo: make this better
@@ -100,6 +110,5 @@ levenshtein = textdistance.levenshtein.distance(original, noisy)
 original_nchars = len(original.replace("\n", ""))
 cer = levenshtein / original_nchars
 
-print("+----------------------------------+")
 print(f"Overall CER: {cer*100:.2f}%")
 
