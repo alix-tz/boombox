@@ -3,3 +3,9 @@ _dev_/
 .vscode/
 cspell.config.yaml
 venv/
+
+//config.py
+
+noisy/
+*_noisy.xml
+*_noisy.txt
