@@ -3,7 +3,7 @@
 import os
 import argparse
 
-import textdistance
+from art import text2art
 
 from boombox.boombox import BoomBox
 from config import *
@@ -28,6 +28,9 @@ parser.add_argument(
 parser.add_argument("--cer", help="character error rate to aim for", type=float)
 
 args = parser.parse_args()
+
+# welcome message
+print(text2art("\nBoomBox", font="tarty2"))
 
 # set input and output paths
 path_in = args.path
@@ -93,15 +96,19 @@ for f in files:
     print("File processed: {}".format(f))
     print("Resulting CER: {}".format(boom.get_cer()))
 
-print("+----------------------------------+")
-print("| Overall statistics               |")
-print("+----------------------------------+")
-
+avg_cer = 0
 # get average CER
-if len(cers) > 0:
-    avg_cer = sum(cers) / len(cers)
-else:
-    avg_cer = 0
-print(f"Average CER: {avg_cer*100:.2f}%")
+if sum(cers) > 0 and len(cers) > 0:
+    avg_cer = (sum(cers) / len(cers)) * 100    
+
+n = 9
+if avg_cer <= 10.0:
+    n += 1
+
+print("+-----------------------------+")
+print(f"| Average CER: {avg_cer:.2f}%{' '*n}|")
+print("+-----------------------------+\n")
+
+
 
 
