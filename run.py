@@ -98,17 +98,10 @@ print("| Overall statistics               |")
 print("+----------------------------------+")
 
 # get average CER
-avg_cer = sum(cers) / len(cers)
+if len(cers) > 0:
+    avg_cer = sum(cers) / len(cers)
+else:
+    avg_cer = 0
 print(f"Average CER: {avg_cer*100:.2f}%")
 
-# get overall CER
-# todo: make this better
-original = "\n".join(original)
-noisy = "\n".join(noisy)
-
-levenshtein = textdistance.levenshtein.distance(original, noisy)
-original_nchars = len(original.replace("\n", ""))
-cer = levenshtein / original_nchars
-
-print(f"Overall CER: {cer*100:.2f}%")
 
