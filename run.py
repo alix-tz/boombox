@@ -68,6 +68,11 @@ if args.cer:
 original = []
 noisy = []
 
+# make directory if it doesn't exist
+if path_out:
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
 for f in files:
     if not path_out:
         if f.endswith(".txt"):
@@ -77,7 +82,7 @@ for f in files:
     else:
         path_out_f = os.path.join(path_out, f)
     boom = BoomBox(os.path.join(path_in, f), file_type=file_type)
-    boom.add_noise(noise_opts, save=True, path_out=path_out)
+    boom.add_noise(noise_opts, save=True, path_out=path_out_f)
     if boom.original:
         original.extend(boom.original)
     if boom.noisy:
