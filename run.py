@@ -10,10 +10,21 @@ from config import *
 
 
 # set argparser
-parser = argparse.ArgumentParser(description="Boombox: a tool for generating noisy data for HTR training. Use config.py to set the parameters of the noise to be applied.")
-parser.add_argument("-i", "--path", help="path to the folder containing the files to be processed", required=True)
-parser.add_argument("-t", "--type", help="type of file to be processed: text or alto", required=True)
-parser.add_argument("-o", "--path_out", help="path to the folder where the noisy files will be saved")
+parser = argparse.ArgumentParser(
+    description="Boombox: a tool for generating noisy data for HTR training. Use config.py to set the parameters of the noise to be applied."
+)
+parser.add_argument(
+    "-i",
+    "--path",
+    help="path to the folder containing the files to be processed",
+    required=True,
+)
+parser.add_argument(
+    "-t", "--type", help="type of file to be processed: text or alto", required=True
+)
+parser.add_argument(
+    "-o", "--path_out", help="path to the folder where the noisy files will be saved"
+)
 parser.add_argument("--cer", help="character error rate to aim for", type=float)
 
 args = parser.parse_args()
@@ -58,6 +69,13 @@ original = []
 noisy = []
 
 for f in files:
+    if not path_out:
+        if f.endswith(".txt"):
+            path_out_f = path_in.replace(".txt", "_noisy.txt")
+        elif f.endswith(".xml"):
+            path_out_f = path_in.replace(".xml", "_noisy.xml")
+    else:
+        path_out_f = os.path.join(path_out, f)
     boom = BoomBox(os.path.join(path_in, f), file_type=file_type)
     boom.add_noise(noise_opts, save=True, path_out=path_out)
     if boom.original:
@@ -79,7 +97,4 @@ cer = levenshtein / original_nchars
 
 print("+----------------------------------+")
 print(f"Overall CER: {cer*100:.2f}%")
-
-
-
 
