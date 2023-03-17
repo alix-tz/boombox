@@ -82,31 +82,3 @@ def pop_invalid_modes(mode_opts):
         if mode not in valid_modes:
             mode_opts.pop(mode)
     return mode_opts
-
-# = = = = = = = = = = Public Utils
-
-def get_eligible_files(path_in, file_type):
-    files = [f for f in os.listdir(path_in) if os.path.isfile(os.path.join(path_in, f))]
-    if file_type == "text":
-        files = [f for f in files if f.endswith(".txt")]
-        files = [f for f in files if not f.endswith("_noisy.txt")]
-    elif file_type == "alto" or file_type == "xml":
-        files = [f for f in files if f.endswith(".xml")]
-        files = [f for f in files if not f.endswith("_noisy.xml")]
-    return files
-
-def get_path_out(po):
-    if po:
-        return po
-    else:
-        return None
-
-def make_report():
-    # build report content
-    # save report
-    pass
-
-def make_outdir_if_needed(path_out):
-    if path_out:
-        if not os.path.exists(path_out):
-            os.makedirs(path_out)
