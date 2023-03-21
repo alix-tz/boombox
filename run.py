@@ -24,13 +24,6 @@ def get_eligible_files(path_in, file_type):
     return files
 
 
-def get_path_out(po):
-    if po:
-        return po
-    else:
-        return None
-
-
 def get_file_path_out(path_in, path_out, f):
     if not path_out:
         if f.endswith(".txt"):
@@ -70,6 +63,7 @@ def make_cer_msg(avg_cer):
             f"| Average CER: {avg_cer:.2f}%{' '*n}|\n" + \
             f"+----------------------------------------+\n"
 
+
 def compare_strings(original_list, noisy_list):
     count_original_str = Counter("".join(original_list))
     count_noisy_str = Counter("".join(noisy_list))
@@ -93,16 +87,20 @@ def compare_strings(original_list, noisy_list):
     chars_table = chars_table.sort_values(by="diff", ascending=False)
     return chars_table
 
-def make_report(chars_table, avg_cer_msg):
+
+def make_report(chars_table, avg_cer_msg, path_out, noise):
     # get date and time for report
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     table_as_str = tabulate(chars_table, headers='keys', tablefmt='psql', showindex=False)
+    noise_opts_report = "".join(["noise options:\n", "\t- Target CER (probability of typo): ", str(noise.get("typo_prob") * 100) + "%", "\n", "\t- Word replacement probability: ", str(noise.get("word_replacement_prob") * 100) + "%", "\n"])
+    print(noise_opts_report)
     print(avg_cer_msg)
     print(table_as_str)
-    report = "".join([f"\n\n{'#'*10} {dt_string} {'#'*10}\n", avg_cer_msg, table_as_str])
+    report = "".join([f"\n\n{'#'*10} {dt_string} {'#'*10}\n", noise_opts_report, avg_cer_msg, table_as_str])
     report_file_name = "boombox_" + now.strftime("%Y-%m-%d") + ".log"
-    with open(report_file_name, "a+", encoding="utf8") as fh:
+    path_report = os.path.join(path_out, report_file_name)
+    with open(path_report, "a+", encoding="utf8") as fh:
         fh.write(report)
 
 
@@ -113,7 +111,12 @@ def main(args):
     # set input and output paths
     path_in = args.path
     file_type = args.type
-    path_out = get_path_out(args.path_out)
+
+    if not args.path_out:
+        path_out = os.path.join(os.getcwd(), "out")
+    else:
+        path_out = args.path_out
+
     files = get_eligible_files(path_in, file_type)
 
     if len(files) == 0:
@@ -122,6 +125,8 @@ def main(args):
     noise_opts = get_noise_opts()
     if args.cer:
         noise_opts["typo_prob"] = args.cer
+    if args.word_replace:
+        noise_opts["word_replacement_prob"] = args.word_replace
 
     # make directory if it doesn't exist
     make_outdir_if_needed(path_out)
@@ -154,8 +159,22 @@ def main(args):
     # build report
     avg_cer_msg = make_cer_msg(avg_cer)
     chars_report = compare_strings(original, noisy)
-    make_report(chars_report, avg_cer_msg)
+    make_report(chars_report, avg_cer_msg, path_out, noise_opts)
 
+    # rename output directory if needed
+    if args.auto_dirname:
+        # replace the dot with a dash and add a 0 at the beginning if needed to make a string such as 2.34 becomes 02-34
+        avg_cer_str = "{:.2f}".format(avg_cer).replace(".", "-")
+        if avg_cer_str[1] == "-":
+            avg_cer_str = "0" + avg_cer_str
+        new_dirname = "bbx-" + avg_cer_str
+        if new_dirname != os.path.basename(path_out):
+            if os.path.exists(os.path.join(os.path.dirname(path_out), new_dirname)):
+                i = 1
+                while os.path.exists(os.path.join(os.path.dirname(path_out), new_dirname + "-" + str(i))):
+                    i += 1
+                new_dirname += "-" + str(i)
+            os.rename(path_out, os.path.join(os.path.dirname(path_out), new_dirname))
 
 
 # set argparser
@@ -169,6 +188,8 @@ parser.add_argument("-t", "--type", required=True,
 parser.add_argument("-o", "--path_out", 
                     help="path to the folder where the noisy files will be saved")
 parser.add_argument("--cer", help="character error rate to aim for", type=float)
+parser.add_argument("-wr", "--word_replace", help="word replacement probability", type=float)
+parser.add_argument("--auto_dirname", help="if activated, automatically name the output directory after the noise level reached", action="store_true")
 
 args = parser.parse_args()
 
