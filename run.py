@@ -163,11 +163,10 @@ def main(args):
 
     # rename output directory if needed
     if args.auto_dirname:
-        # replace the dot with a dash and add a 0 at the beginning if needed to make a string such as 2.34 becomes 02-34
         avg_cer_str = "{:.2f}".format(avg_cer).replace(".", "-")
         if avg_cer_str[1] == "-":
             avg_cer_str = "0" + avg_cer_str
-        new_dirname = "bbx-" + avg_cer_str
+        new_dirname = "n" + avg_cer_str # n stands for noise
         if new_dirname != os.path.basename(path_out):
             if os.path.exists(os.path.join(os.path.dirname(path_out), new_dirname)):
                 i = 1
