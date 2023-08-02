@@ -1,4 +1,4 @@
-<img src="./asset/boombox.svg" width="150" align="right">
+<img src="./assets/boombox.svg" width="150" align="right">
 
 # BoomBox
 
