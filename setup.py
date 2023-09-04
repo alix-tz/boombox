@@ -28,7 +28,7 @@ setup(
         "typo @ git+https://github.com/alix-tz/typo@b2f65a418c0671ce749ab4cb060acfdb2e6062fa",
         "tabulate==0.9.0",
         "art==5.8",
-        "pandas==1.3.5",
+        "pandas",
     ],
     classifiers=[
         "License :: OSI Approved :: MIT License",
