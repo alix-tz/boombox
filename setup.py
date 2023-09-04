@@ -19,9 +19,7 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     url='https://github.com/alix-tz/boombox',
-    authors = [
-        {name="Alix Chagué", email="alix.chague@inria.fr"}
-        ]
+    author = "Alix Chagué",
     license='MIT',
     python_requires='>=3.8',
     install_requires=install_required,
