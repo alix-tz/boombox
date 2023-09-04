@@ -9,6 +9,9 @@ HERE = pathlib.Path(__file__).parent
 # The text of the README file
 README = (HERE/"README.md").read_text()
 
+with open("requirements.txt", encoding="utf-8") as f:
+    install_required = f.read().splitlines()
+
 setup(
     name='boombox',
     version=__version__,
@@ -16,8 +19,12 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     url='https://github.com/alix-tz/boombox',
-    author='Alix Chagué',
+    authors = [
+        {name="Alix Chagué", email="alix.chague@inria.fr"}
+        ]
     license='MIT',
+    python_requires='>=3.8',
+    install_requires=install_required,
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Intended Audience :: Developers",
@@ -25,5 +32,6 @@ setup(
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Artificial Intelligence"
     ],
-    packages=['boombox']
+    packages=['boombox'], 
+    keywords=["HTR", "handwritten text recognition", "synthetic noise", "data diminution", "data augmentation"]
 )
